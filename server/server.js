@@ -1,6 +1,12 @@
 import express from "express";
 import cors from "cors";
-import { initialize, loadCSVData, getData, insertUserData, insertScrapData } from "./db.js";
+import {
+  initialize,
+  loadCSVData,
+  getData,
+  insertUserData,
+  insertPortfolioData,
+} from "./db.js";
 import db from "./lib/varDB.js";
 import passport from "passport";
 import { Strategy } from "passport-local";
@@ -35,13 +41,13 @@ app.use(
 );
 
 app.use(passport.initialize()); //passport초기화
-app.use(passport.session());    //passport 세션 연결
+app.use(passport.session()); //passport 세션 연결
 
-initializePassport(passport);   //초기화 실행
+initializePassport(passport); //초기화 실행
 //초기화 반복 방지
 let isInitialized = false;
 
-app.get("/chart", async (req, res) => {
+app.get("/", async (req, res) => {
   //초기화 확인
   if (isInitialized === false) {
     isInitialized = true;
@@ -54,10 +60,9 @@ app.get("/chart", async (req, res) => {
         process.exit(1);
       });
   }
+});
 
-  //포폴 데이터 삽입 실험용 더미 코드
-  insertScrapData("aa","2019-12-11","2020-11-08","첫번째 코멘트");
-
+app.get("/api/chart", async (req, res) => {
   try {
     const countResult = await new Promise((resolve, reject) => {
       db.get("SELECT COUNT(*) as count FROM stock_data", (err, row) => {
@@ -87,6 +92,12 @@ app.get("/chart", async (req, res) => {
   }
 });
 
+// 포트폴리오 추가 API
+app.post("/api/update_portfolio", (req, res) => {
+  const { id, start } = req.body;
+  insertPortfolioData();
+  res.status(201).json({ message: "update_success" });
+});
 
 // 회원가입 API
 app.post("/api/signup", async (req, res) => {

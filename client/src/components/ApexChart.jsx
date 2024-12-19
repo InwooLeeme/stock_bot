@@ -1,12 +1,14 @@
 import ApexChart from "react-apexcharts";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Chart = ({ theme }) => {
   const [chartData, setChartData] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
   const getChartData = async () => {
-    const json = await (await fetch("http://localhost:5000/chart")).json();
+    const { data } = await axios.get("http://localhost:5000/api/chart");
+    const json = data;
     const result = json.splice(1);
     const default_ONEYEAR_DATA = result.splice(0, 246);
 

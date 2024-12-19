@@ -21,20 +21,29 @@ function Portfolio() {
     return date.toISOString().slice(0, 10); // YYYY-MM-DD
   };
 
-  const handleAddPortfolio = () => {
+  const handleAddPortfolio = async () => {
     const newPortfolio = {
       id: Date.now(),
       startDate,
       endDate,
       comment,
     };
-    /* post to server */
-    setPortfolioData((prev) => [...prev, newPortfolio]);
+    try {
+      // 백엔드로 데이터 전송
+      const response = await axios.post(
+        "http://localhost:5000/api/update_portfolio",
+        newPortfolio
+      );
 
-    setStartDate("");
-    setEndDate("");
-    setComment("");
-    setShowInput(false);
+      // 요청 성공 시 portfolio에 새로운 포트폴리오 추가
+      setPortfolioData((prev) => [...prev, newPortfolio]);
+      setStartDate("");
+      setEndDate("");
+      setComment("");
+      setShowInput(false);
+    } catch (error) {
+      console.error("포트폴리오 추가 중 오류 발생:", error);
+    }
   };
 
   const handlePortfolio = () => {

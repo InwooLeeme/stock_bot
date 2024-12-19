@@ -29,13 +29,12 @@ export const InitDatabase = () => {
           console.log("stock 테이블이 생성되었습니다.");
           resolve();
         }
-      }    
+      }
     );
-  }
-);
+  });
   //유저 테이블 초기화
-  const createUserTable = new Promise((resolve, reject)=> {
-  db.run(
+  const createUserTable = new Promise((resolve, reject) => {
+    db.run(
       `
       CREATE TABLE IF NOT EXISTS user(
           id TEXT NOT NULL PRIMARY KEY,
@@ -46,12 +45,12 @@ export const InitDatabase = () => {
         if (err) {
           console.error("테이블 생성 실패:", err.message);
           reject(err);
-        } else{
+        } else {
           console.log("user 테이블이 생성되었습니다.");
-            resolve();
+          resolve();
         }
       }
-    )
+    );
   });
 
   //스크랩 데이터베이스 초기화
@@ -66,17 +65,16 @@ export const InitDatabase = () => {
       )
       `,
       (err) => {
-        if(err){
+        if (err) {
           console.log("스크랩 테이블 생성 실패", err.message);
           reject(err);
-        } else{
+        } else {
           console.log("스크랩 테이블 생성 성공");
           resolve();
         }
       }
-    )
+    );
   });
-
 
   return Promise.all([createStockTable, createUserTable, createScrapTable]);
 };
@@ -235,8 +233,8 @@ export const insertUserData = (id, password) => {
 //스크랩 데이터베이스 관련코드드
 
 //스크랩 데이터베이스에 값 입력
-export const insertScrapData = (id, start, end, comment) => {
-  return new Promise ((resolve, reject) => {
+export const insertPortfolioData = (id, start, end, comment) => {
+  return new Promise((resolve, reject) => {
     const stmt = db.prepare(
       `
       INSERT INTO scrap
@@ -244,15 +242,15 @@ export const insertScrapData = (id, start, end, comment) => {
       VALUES (?,?,?,?)
       `
     );
-    stmt.run(id, start, end, comment, function(err) {
+    stmt.run(id, start, end, comment, function (err) {
       if (err) {
         console.err("스크랩 데이터 삽입 오류:", err.message);
         reject(err);
-      } else{
+      } else {
         console.log("스크랩 데이터 삽입 성공");
         resolve();
       }
-    })
+    });
     stmt.finalize((err) => {
       if (err) {
         console.error("Prepared Statement 종료 오류:", err.message);
